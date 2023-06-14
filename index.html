@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디아블로4 이벤트</title>
+    <meta name="description" content="디아블로4 이벤트에 오신것을 환영합니다. 디아블로4 이벤트와 관련된 최신 상황 및 업데이트 내용들을 계속해서 소개할 예정입니다. 또한 디아블로4를 플레이 하는데 도움이 되는 내용들을 지속적으로 업데이트할 예정입니다.">
+    <meta name="keywords" content="디아블로4, 디아블로4 이벤트, 디아블로4 인게임 이벤트, 게임 이벤트, 디아블로4 업데이트, 디아블로4 최신 뉴스, Diablo 4, events, in-game events, gaming events, Diablo 4 news, announcements, seasonal content, gaming community">
+    <style>
+        @font-face {
+          font-family: CustomFont;
+          src: url(kodia.ttf) format('truetype');
+        }
+  
+        img {
+          border: 5px solid black;
+        }
+  
+        body {
+          font-family: Arial, sans-serif;
+          text-align: center;
+          background:  black;
+          color: white;
+        }
+  
+        h1 {
+          font-family: CustomFont, Arial, sans-serif;
+        }
+  
+        .statColor {
+          color: red;
+        }
+
+        #currentStat {
+          font-family: CustomFont, Arial, sans-serif;
+          font-size: 40px;
+        }
+  
+        #progressTime, #startTime {
+          font-family: CustomFont, Arial, sans-serif;
+          margin-top: 30px;
+        }
+
+      </style>
+</head>
+<body>
+    <div class="container">
+        <img src="diablo4 event logo.jpg" alt = "logo">
+        <h1 id="currentStat">현재 시점 상태 </h1>
+        <h2 id="progressTime">진행 시간 : </h2>
+        <h3 id="startTime">최근 물결 시작 시점or 다음 물결 시작 시점</h3>
+    </div>
+
+    <script>
+        function start(){
+            // y, m, d, h, m, s, ms
+            const standardTime = (new Date(2023,5,5,10,0,0)).getTime()
+            let currentTime = (new Date()).getTime()
+            
+            let eventDuration = 60*60*1000
+            let preEventDuration = (60+15)*60*1000
+            let totalEventDuration = eventDuration + preEventDuration
+            
+            let timeDiff = currentTime - standardTime
+            let evnetCount = Math.floor( timeDiff / totalEventDuration )
+            
+            // latest Helltide start
+            let latestStartTime = standardTime + (evnetCount * totalEventDuration)
+            let latestStartDate = new Date(latestStartTime)
+            
+            // next Helltide start
+            let nextStartTime = standardTime + ( ( evnetCount + 1 ) * totalEventDuration)
+            let nextStartDate = new Date(nextStartTime)
+            
+
+            let remainTime = currentTime - latestStartTime
+            let digitTime = ""
+
+            let hour = 0;
+            let min = 0;
+
+            if( remainTime <= eventDuration ){
+                // Helltide in progress
+                document.getElementById("currentStat").innerHTML = "지옥 물결이 진행중입니다."
+                document.getElementById("currentStat").classList.add("statColor")
+
+                digitTime = getDigitTime( eventDuration - remainTime )
+                document.getElementById("progressTime").innerHTML = "남은 시간 :" + digitTime
+
+                document.getElementById("startTime").innerHTML = "최근 시작 시간 : " + latestStartDate.getFullYear() + "년 " +  ( latestStartDate.getMonth() +1 ) + "월 " + latestStartDate.getDate() + "일" + latestStartDate.getHours() + " : " + getDigitNumber(latestStartDate.getMinutes()) + " : 00"
+                
+
+            }else{
+                // Helltide in wait                
+                document.getElementById("currentStat").innerHTML = "지옥 물결을 기다립니다."
+                document.getElementById("currentStat").classList.remove("statColor")
+                
+                digitTime = getDigitTime( preEventDuration - (remainTime - eventDuration) )
+                document.getElementById("progressTime").innerHTML = "남은 시간 : " + digitTime
+                
+                document.getElementById("startTime").innerHTML = "다음 시작 시간 : " + nextStartDate.getFullYear() + "년 " +  ( nextStartDate.getMonth()+1) + "월 " + nextStartDate.getDate() + "일 " + nextStartDate.getHours() + " : " + getDigitNumber(nextStartDate.getMinutes()) + " : 00"
+            }
+        }
+
+        start()
+
+        function getDigitTime(time){
+            let sec = 1000
+            let min = 60 * 1000
+            let hour = 60 * 60 * 1000
+            let day = 24 * 60 * 60 * 1000
+
+            let remainDay = 0
+            let remainHour = 0
+            let remainMin = 0
+            let remainSec = 0
+
+            if( time < sec ){
+                // 0 sec
+                remainSec = 0
+            }else if( time < min ){
+                // 1 ~ 59 sec
+                remainSec = Math.floor( time / sec )
+            }else if( time < hour ){
+                // 1 ~ 59 min, 1 ~ 59 sec
+                remainMin = Math.floor( time / min )
+                remainSec = Math.floor( ( time - ( min* remainMin) ) / sec )
+            }else if ( time < day ){
+                // 1 ~ 23 hour, 1 ~ 59 min, 1 ~ 59 sec
+                remainHour = Math.floor( time / hour )
+                remainMin = Math.floor( (time - ( hour * remainHour ) ) / min )
+                remainSec = Math.floor( (time - ( hour * remainHour ) -( min* remainMin)) / sec )
+            }else
+            {
+                // day, 1 ~ 23 hour, 1 ~ 59 min, 1 ~ 59 sec
+                remainDay = Math.floor( time / day )
+                remainHour = Math.floor( ( time - ( day * remainDay ) ) / hour )
+                remainMin = Math.floor( (time - ( day * remainDay ) - ( hour * remainHour ) ) / min )
+                remainSec = Math.floor( (time - ( day * remainDay ) - ( hour * remainHour ) -( min* remainMin)) / sec )
+            }
+
+            console.log( remainDay + " 일 " + remainHour + " 시 " + remainMin + " 분 " + remainSec + " 초 " )
+            // return remainDay + " 일 " + remainHour + " 시 " + remainMin + " 분 " + remainSec + " 초 "
+            return remainHour + " 시 " + remainMin + " 분 " + remainSec + " 초 "
+        }
+
+        function getDigitNumber(num){
+          let txt = num.toString()
+          if( txt.length < 2 ) return "0"+txt
+          return txt;
+          // console.log("getDigitNumber : ",txt, txt.length)
+        }
+
+        setInterval(start,1000)
+
+    </script>
+</body>
+</html>
