@@ -89,7 +89,7 @@
                 document.getElementById("currentStat").classList.add("statColor")
 
                 digitTime = getDigitTime( eventDuration - remainTime )
-                document.getElementById("progressTime").innerHTML = "남은 시간 :" + digitTime
+                document.getElementById("progressTime").innerHTML = "남은 시간 : " + digitTime
 
                 document.getElementById("startTime").innerHTML = "최근 시작 시간 : " + latestStartDate.getFullYear() + "년 " +  ( latestStartDate.getMonth() +1 ) + "월 " + latestStartDate.getDate() + "일" + latestStartDate.getHours() + " : " + getDigitNumber(latestStartDate.getMinutes()) + " : 00"
             }else{
